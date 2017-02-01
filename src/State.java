@@ -10,11 +10,17 @@ public class State {
 	private enum Actions {TURN_ON, TURN_OFF, GO, TURN_LEFT, TURN_RIGHT, SUCK};
 	
 	private int x, y;
-	private boolean dirty;
+	private boolean isdirty;
+	private boolean isObsticle;
 	private Orientation orientation;
-	private int number_of_dirty_states;
-	private int home_x, home_y;
-	private State parent;
+	
+	
+	State(int xcord, int ycord, boolean dirt, boolean obst){
+		x = xcord;
+		y = ycord;
+		isdirty = dirt;
+		isObsticle = obst;
+	}
 	
 	private List<String> legalActions() {
 		List<String> actions = null;
@@ -38,8 +44,9 @@ public class State {
 		return null;
 	}
 	
+	//TODO: and is home!
 	private boolean goalState() {
-		return number_of_dirty_states == 0 && home_x == x && home_y == y; 
+		return number_of_dirty_states == 0; 
 	}
 }
 
