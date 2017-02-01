@@ -8,14 +8,16 @@ public class State {
 	
 	private enum Orientation {NORTH, EAST, SOUTH, WEST};
 	private enum Actions {TURN_ON, TURN_OFF, GO, TURN_LEFT, TURN_RIGHT, SUCK};
+	
 	private int x, y;
 	private boolean dirty;
 	private Orientation orientation;
 	private int number_of_dirty_states;
 	private int home_x, home_y;
+	private State parent;
 	
 	private List<String> legalActions() {
-		List<String> actions;
+		List<String> actions = null;
 		
 		if (this.orientation.equals("NORTH")) {
 			
@@ -32,7 +34,7 @@ public class State {
 		return actions;
 	}
 	
-	State successorState(Action) {
+	State successorState(String action) {
 		return null;
 	}
 	
