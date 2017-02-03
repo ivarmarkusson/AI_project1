@@ -1,13 +1,11 @@
 package prog1;
 
-import java.util.List;
 
 public class Environment {
-	public Node _root;
 	public State[][] grid;
 	public int length;
 	public int width;
-	public int home_x, home_y;
+	public Coordinate home_Coordinate;
 	public String home_orientation;
 	public int number_of_dirty_states;
 	
@@ -16,23 +14,9 @@ public class Environment {
 		length = 0;
 		width = 0;
 	}
-	
-	public void createTree(){
-		_root.currentState = grid[home_x][home_y];
-		createTree(_root);
-	}
-	
-	private void createTree(Node node){
-		
-	}
-	
-	private void insertToTree(){
-		
-	}
 
-	public void setHome(int xcord, int ycord){
-		home_x = xcord;
-		home_y = ycord;
+	public void setHome(int xcoord, int ycoord){
+		home_Coordinate = new Coordinate(xcoord, ycoord);
 	}
 	
 	public void setHomeOrientation(String orient){

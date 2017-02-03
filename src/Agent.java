@@ -1,19 +1,18 @@
 package prog1;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Agent
 {
-	private List<String> _path;
-	private int _turn;
+	private Stack<String> _path;
 	private Environment environment;
 	
     public void init(Collection<String> percepts){
-	    _turn = -1;
-	    _path.add("TURN_ON");
+	    _path = new Stack<String>();
+    	_path.push("TURN_OFF");
 	    environment = new Environment();
 	    
 		Pattern perceptNamePattern = Pattern.compile("\\(\\s*([^\\s]+).*");
@@ -61,10 +60,12 @@ public class Agent
 				System.err.println("strange percept that does not match pattern: " + percept);
 			}
 		}
+		_path.push("TURN_ON");
     }
     
     public String nextAction(Collection<String> percepts){
-    	_turn++;
-    	return _path.get(_turn);
+    	if(!_path.empty())
+    		return _path.pop();
+    	return null; //should not happen
     }
 }
