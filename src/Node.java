@@ -14,8 +14,7 @@ public class Node {
 		parent = null;
 		cost = 0;
 		currentState = null;
-		actionTo = "";
-		
+		actionTo = "";	
 		currentState = state;
 	}
 	
@@ -27,7 +26,10 @@ public class Node {
 			builder.push(next.actionTo);
 			next = next.parent;
 		}
+		
 		return builder;
 	}
+	
+	
 	
 }

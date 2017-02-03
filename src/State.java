@@ -16,29 +16,32 @@ public class State {
 	public String orientation;
 	
 	
-	State(int x, int y, boolean dirt, boolean obst){
+	State(int x, int y, boolean dirt, boolean obst, String orient){
 		coordinate = new Coordinate(x, y);
 		isdirty = dirt;
 		isObsticle = obst;
+		orientation = orient;		
 	}
 	
 	
 	
-	private List<String> legalActions(Environment environment) {
+	public List<String> legalActions(Environment environment) {
 		List<String> actions = new ArrayList<String>();
 		
 		if(this.isdirty){
 			actions.add("SUCK");
 		}
 		
-		Coordinate turn_right = this.turn(environment, this.orientation, true);
-		Coordinate turn_left = this.turn(environment, this.orientation, false);
+		State turn_right = this.turn(environment, this.orientation, true);
+		turn_right.coordinate.forward(turn_right.orientation);
+		State turn_left = this.turn(environment, this.orientation, false);
+		turn_left.coordinate.forward(turn_left.orientation);
 		Coordinate go = this.coordinate.forward(this.orientation);
 		
-		if(checkAction(turn_right, environment)){
+		if(checkAction(turn_right.coordinate, environment)){
 			actions.add("TURN_RIGHT");
 		}
-		if(checkAction(turn_left, environment)){
+		if(checkAction(turn_left.coordinate, environment)){
 			actions.add("TURN_LEFT");
 		}
 		if(checkAction(go, environment)){
@@ -58,7 +61,7 @@ public class State {
 		return false;
 	}
 	
-	private Coordinate turn(Environment environment, String orientation, boolean right){
+	private State turn(Environment environment, String orientation, boolean right){
 		Coordinate next = new Coordinate(this.coordinate.x, this.coordinate.y);
 		String newOrientation = "";
 		
@@ -91,20 +94,38 @@ public class State {
 			}
 		}
 		
-		next.forward(newOrientation);
-		
-		return next;
+		State result = new State(next.x, next.y, environment.grid[next.x][next.y].isdirty, environment.grid[next.x][next.y].isObsticle, newOrientation);
+		return result;
 	}
 	
 	//TODO:
-	State successorState(String action) {
-		return null;
+	State successorState(String action, Environment environment) {
+		State successorState = new State(this.coordinate.x, this.coordinate.y, false, false, this.orientation);
+		
+		if (action == "GO"){
+			successorState.coordinate = this.coordinate.forward(this.orientation);
+			successorState.isdirty = environment.grid[successorState.coordinate.x][successorState.coordinate.y].isdirty;			
+		}
+		else if (action == "TURN_RIGHT"){
+			successorState = this.turn(environment, action, true);
+		}
+		else if (action == "TURN_Left"){
+			successorState = this.turn(environment, action, false);
+		}
+		else if (action == "SUCK"){
+			environment.number_of_dirty_states--;
+		}
+		return successorState;
 	}
 	
+	
 	//TODO: and is home!
-	private boolean goalState(Coordinate init, String initOrientation, int dirtLeft) {
+	public boolean goalState(Coordinate init, String initOrientation, int dirtLeft) {
 		
 		return this.orientation.equals(initOrientation) && this.coordinate.x == init.x && this.coordinate.y == init.y && dirtLeft == 0; 
+	}
+	public int hashCode(){
+		return (this.coordinate.hashCode() * 1221) ^ (this.orientation.hashCode() * 4512321);
 	}
 }
 

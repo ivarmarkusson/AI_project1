@@ -9,10 +9,10 @@ public class Agent
 {
 	private Stack<String> _path;
 	private Environment environment;
+	private boolean turn_on;
 	
     public void init(Collection<String> percepts){
-	    _path = new Stack<String>();
-    	_path.push("TURN_OFF");
+	    
 	    environment = new Environment();
 	    
 		Pattern perceptNamePattern = Pattern.compile("\\(\\s*([^\\s]+).*");
@@ -35,14 +35,14 @@ public class Agent
 					}
 				}
 				else if (perceptName.equals("ORIENTATION")) {
-					Matcher m = Pattern.compile("\\(\\s*ORIENTATION\\s+(NORTH|SOUTH|EAST|WEST)\\s*\\)").matcher(percept);
+					Matcher m = Pattern.compile("\\(\\s*ORIENTATION\\s+([A-Z]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
 						//TODO: Initialize the orientation of the agent at initial state
 						environment.setHomeOrientation(m.group(1));
 					}
 				}
 				else if (perceptName.equals("AT")) {
-					Matcher m = Pattern.compile("\\(\\s*AT\\s+(DIRT|OBSTACLE)\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
+					Matcher m = Pattern.compile("\\(\\s*AT\\s+([A-Z]+)\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
 						//TODO: Initialize dirt or obstacle for this position in the grid
 						if (m.group(1) == "DIRT"){
@@ -60,12 +60,23 @@ public class Agent
 				System.err.println("strange percept that does not match pattern: " + percept);
 			}
 		}
-		_path.push("TURN_ON");
+		
+		BreadthFirstSearch breadthFirstSearch = new BreadthFirstSearch(environment);
+		_path = new Stack<String>();
+		_path = breadthFirstSearch.search();
+		turn_on = true;
+		//System.out.println(_path.toString());
+		//System.out.println("I IS HERE!");
     }
     
     public String nextAction(Collection<String> percepts){
+    	if(turn_on){
+    		turn_on = false;
+    		return "TURN_ON";
+    	}
     	if(!_path.empty())
     		return _path.pop();
-    	return null; //should not happen
+    	else
+    		return "TURN_OFF"; 
     }
 }

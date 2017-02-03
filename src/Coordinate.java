@@ -29,4 +29,8 @@ public class Coordinate {
 		return next;
 	}
 	
+	public int hashCode(){
+		return (this.x*21143) ^ (this.y*45127);
+	}
+	
 }

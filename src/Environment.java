@@ -30,7 +30,7 @@ public class Environment {
 		
 		for(int i = 0; i < len; i++){
 			for(int j = 0; j < wid; j++){
-				grid[i][j] = new State(i,j,false,false);
+				grid[i][j] = new State(i,j,false,false,"");
 			}
 		}
 	}
@@ -44,7 +44,7 @@ public class Environment {
 			number_of_dirty_states++;
 		}
 		
-		grid[xcord][ycord] = new State(xcord, ycord, dirt, obst);
+		grid[xcord][ycord] = new State(xcord, ycord, dirt, obst, "");
 	}
 	
 }
