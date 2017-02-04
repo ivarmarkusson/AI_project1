@@ -1,4 +1,4 @@
-package prog1;
+//package prog1;
 
 public class Coordinate {
 	
