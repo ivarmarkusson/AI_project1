@@ -2,6 +2,7 @@ package prog1;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 
 
@@ -12,18 +13,17 @@ public class State {
 	
 	public Coordinate coordinate;
 	public boolean isdirty;
-	public boolean isObsticle; // TODO: should be in environment, there is no state in a obsticle. 
+	public boolean isObsticle; 
 	public String orientation;
-	
+	public List<Coordinate> cleaned;
 	
 	State(int x, int y, boolean dirt, boolean obst, String orient){
+		cleaned = new ArrayList<Coordinate>();
 		coordinate = new Coordinate(x, y);
 		isdirty = dirt;
 		isObsticle = obst;
 		orientation = orient;		
 	}
-	
-	
 	
 	public List<String> legalActions(Environment environment) {
 		List<String> actions = new ArrayList<String>();
@@ -33,9 +33,11 @@ public class State {
 		}
 		
 		State turn_right = this.turn(environment, this.orientation, true);
-		turn_right.coordinate.forward(turn_right.orientation);
+		turn_right.coordinate = turn_right.coordinate.forward(turn_right.orientation);
+		
 		State turn_left = this.turn(environment, this.orientation, false);
-		turn_left.coordinate.forward(turn_left.orientation);
+		turn_left.coordinate = turn_left.coordinate.forward(turn_left.orientation);
+		
 		Coordinate go = this.coordinate.forward(this.orientation);
 		
 		if(checkAction(turn_right.coordinate, environment)){
@@ -52,78 +54,103 @@ public class State {
 	}
 	
 	private boolean checkAction(Coordinate coordinate, Environment environment){
-		if(coordinate.x > environment.width || coordinate.y > environment.length || environment.width < 0 || environment.length < 0){
+		if(coordinate.x >= environment.width || coordinate.y >= environment.length || coordinate.x < 0 || coordinate.y < 0){
 			return false;
 		}
-		else if(!environment.grid[coordinate.x][coordinate.y].isObsticle){
+		else if(environment.grid[coordinate.x][coordinate.y].isObsticle == false){
 			return true;
 		}
 		return false;
 	}
 	
 	private State turn(Environment environment, String orientation, boolean right){
-		Coordinate next = new Coordinate(this.coordinate.x, this.coordinate.y);
-		String newOrientation = "";
+		String newOrientation = "NONE";
 		
 		if(right){
-			if(orientation == "NORTH"){
+			if(orientation.equals("NORTH")){
 				newOrientation = "EAST";
 			}
-			else if(orientation == "SOUTH"){
+			else if(orientation.equals("SOUTH")){
 				newOrientation = "WEST";
 			}
-			else if(orientation == "EAST"){
+			else if(orientation.equals("EAST")){
 				newOrientation = "SOUTH";
 			}
-			else if(orientation == "WEST"){
+			else if(orientation.equals("WEST")){
 				newOrientation = "NORTH";
 			}
 		}
 		else{
-			if(orientation == "NORTH"){
+			if(orientation.equals("NORTH")){
 				newOrientation = "WEST";
 			}
-			else if(orientation == "SOUTH"){
+			else if(orientation.equals("SOUTH")){
 				newOrientation = "EAST";
 			}
-			else if(orientation == "EAST"){
+			else if(orientation.equals("EAST")){
 				newOrientation = "NORTH";
 			}
-			else if(orientation == "WEST"){
+			else if(orientation.equals("WEST")){
 				newOrientation = "SOUTH";
 			}
 		}
 		
-		State result = new State(next.x, next.y, environment.grid[next.x][next.y].isdirty, environment.grid[next.x][next.y].isObsticle, newOrientation);
+		State result = new State(this.coordinate.x, this.coordinate.y, this.isdirty, this.isObsticle, newOrientation);
 		return result;
 	}
 	
-	//TODO:
 	State successorState(String action, Environment environment) {
-		State successorState = new State(this.coordinate.x, this.coordinate.y, false, false, this.orientation);
+		State successorState = new State(this.coordinate.x, this.coordinate.y, this.isdirty, this.isObsticle, this.orientation);
+		successorState.cleaned = this.cleaned;
 		
-		if (action == "GO"){
+		if (action.equals("GO")){
 			successorState.coordinate = this.coordinate.forward(this.orientation);
-			successorState.isdirty = environment.grid[successorState.coordinate.x][successorState.coordinate.y].isdirty;			
+			successorState.isdirty = environment.grid[successorState.coordinate.x][successorState.coordinate.y].isdirty;
 		}
-		else if (action == "TURN_RIGHT"){
-			successorState = this.turn(environment, action, true);
+		else if (action.equals("TURN_RIGHT")){
+			successorState = this.turn(environment, this.orientation, true);
 		}
-		else if (action == "TURN_Left"){
-			successorState = this.turn(environment, action, false);
+		else if (action.equals("TURN_LEFT")){
+			successorState = this.turn(environment, this.orientation, false);
 		}
-		else if (action == "SUCK"){
-			environment.number_of_dirty_states--;
+		else if (action.equals("SUCK")){
+			if(this.cleaned.contains(this.coordinate) == false){
+				successorState.cleaned.add(this.coordinate);
+			}
 		}
 		return successorState;
 	}
 	
 	
-	//TODO: and is home!
-	public boolean goalState(Coordinate init, String initOrientation, int dirtLeft) {
-		
-		return this.orientation.equals(initOrientation) && this.coordinate.x == init.x && this.coordinate.y == init.y && dirtLeft == 0; 
+	public boolean goalState(int number_of_dirt, Coordinate home_coord, String orientation){
+		if(this.cleaned.size() == number_of_dirt && this.coordinate.equals(home_coord)){
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
+	
+	@Override
+	public boolean equals(Object obj){
+		if(obj == null){
+			return false;
+		}
+		else if(!State.class.isAssignableFrom(obj.getClass())){
+	        return false;
+	    }
+		
+		final State comparison = (State) obj;
+		
+		if(this.coordinate.equals(comparison.coordinate) && this.orientation.equals(comparison.orientation) && this.isdirty == comparison.isdirty){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	@Override
 	public int hashCode(){
 		return (this.coordinate.hashCode() * 1221) ^ (this.orientation.hashCode() * 4512321);
 	}

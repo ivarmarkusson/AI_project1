@@ -29,8 +29,31 @@ public class Coordinate {
 		return next;
 	}
 	
+	@Override
 	public int hashCode(){
 		return (this.x*21143) ^ (this.y*45127);
+	}
+	
+	@Override
+	public boolean equals(Object obj){
+		if(obj == null){
+			return false;
+		}
+		else if(!Coordinate.class.isAssignableFrom(obj.getClass())){
+	        return false;
+	    }
+		
+		final Coordinate comparison = (Coordinate) obj;
+		
+		if(this.x != comparison.x){
+			return false;
+		}
+		else if(this.y != comparison.y){
+			return false;
+		}
+		else{
+			return true;
+		}
 	}
 	
 }

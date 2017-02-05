@@ -9,7 +9,6 @@ public class Agent
 {
 	private Stack<String> _path;
 	private Environment environment;
-	private boolean turn_on;
 	
     public void init(Collection<String> percepts){
 	    
@@ -31,7 +30,7 @@ public class Agent
 					Matcher m = Pattern.compile("\\(\\s*SIZE\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
 						//TODO: Initialize size of the environment
-						environment.setGrid(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
+						environment.setSize(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
 					}
 				}
 				else if (perceptName.equals("ORIENTATION")) {
@@ -45,10 +44,10 @@ public class Agent
 					Matcher m = Pattern.compile("\\(\\s*AT\\s+([A-Z]+)\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
 						//TODO: Initialize dirt or obstacle for this position in the grid
-						if (m.group(1) == "DIRT"){
+						if (m.group(1).equals("DIRT")){
 							environment.insert(Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)), true, false);
 						}
-						else if (m.group(1) == "OBSTACLE"){
+						else if (m.group(1).equals("OBSTACLE")){
 							environment.insert(Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)), false, true);							
 						}
 					}
@@ -61,20 +60,16 @@ public class Agent
 			}
 		}
 		
+		environment.setGrid();
 		BreadthFirstSearch breadthFirstSearch = new BreadthFirstSearch(environment);
 		_path = new Stack<String>();
 		_path = breadthFirstSearch.search();
-		turn_on = true;
-		//System.out.println(_path.toString());
-		//System.out.println("I IS HERE!");
+		_path.push("TURN_ON");
+		
     }
     
     public String nextAction(Collection<String> percepts){
-    	if(turn_on){
-    		turn_on = false;
-    		return "TURN_ON";
-    	}
-    	if(!_path.empty())
+    	if(!_path.empty() )
     		return _path.pop();
     	else
     		return "TURN_OFF"; 

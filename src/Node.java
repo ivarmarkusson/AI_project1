@@ -13,7 +13,6 @@ public class Node {
 	Node(State state){
 		parent = null;
 		cost = 0;
-		currentState = null;
 		actionTo = "";	
 		currentState = state;
 	}
