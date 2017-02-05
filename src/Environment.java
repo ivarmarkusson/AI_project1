@@ -1,3 +1,8 @@
+import java.util.ArrayList;
+import java.util.List;
+
+import javafx.scene.layout.GridPane;
+
 //package prog1;
 
 
@@ -8,14 +13,16 @@ public class Environment {
 	public Coordinate home_Coordinate;
 	public String home_orientation;
 	public int number_of_dirty_states;
+	public List<Coordinate> dirtLocation;
+	public List<Coordinate> obstLocation;
 	
 	Environment(){
 		number_of_dirty_states = 0;
 		length = 0;
 		width = 0;
-		setGrid(100, 100);
+		initGrid(10, 10);
 	}
-
+	
 	public void setHome(int xcoord, int ycoord){
 		home_Coordinate = new Coordinate(xcoord, ycoord);
 	}
@@ -24,7 +31,7 @@ public class Environment {
 		home_orientation = orient;
 	}
 	
-	public void setGrid(int len, int wid){
+	public void initGrid(int len, int wid){
 		length = len;
 		width = wid;
 		grid = new State[len][wid];
@@ -36,12 +43,16 @@ public class Environment {
 		}
 	}
 	
-	public void resizeGrid(){
-		State[][] newGrid = new State[length][width];
+	public void setGrid(int len, int wid){
+		State[][] newGrid = new State[len][wid];
 		
-		for(int i = 0; i < length; i++){
-			for(int j = 0; j < width; j++){
+		for(int i = 0; i < len; i++){
+			for(int j = 0; j < wid; j++){
 				newGrid[i][j] = grid[i][j];
+				/*System.out.println("Grid[" + i + "][" + j + "] Dirt: " + grid[i][j].isdirty);
+				System.out.println("Grid[" + i + "][" + j + "] Obstacle: " + grid[i][j].isObsticle);
+				System.out.println("Grid[" + i + "][" + j + "]: " + grid[i][j].orientation);
+				System.out.println("Grid[" + i + "][" + j + "]: " + "(" + grid[i][j].coordinate.x + "," + grid[i][j].coordinate.y + ")");*/
 			}
 		}
 	}
@@ -54,10 +65,7 @@ public class Environment {
 		if(dirt){
 			number_of_dirty_states++;
 		}
-		System.out.println("NUMBER OF DIRTY SPOTS: " + number_of_dirty_states);
-		System.out.println(xcord +", "+ ycord + ", " + dirt + ", " + obst);
-		grid[xcord][ycord] = new State(xcord, ycord, dirt, obst, null);
-		System.out.println(xcord +", "+ ycord + ", " + dirt + ", " + obst);
+		grid[xcord-1][ycord-1].isdirty = dirt;
+		grid[xcord-1][ycord-1].isObsticle = obst;
 	}
-	
 }

@@ -28,8 +28,9 @@ public class BreadthFirstSearch implements Algorithms{
 		
 		while(!frontier.isEmpty()){
 			Node nextNode = frontier.remove();
-			if(!visited.containsKey(nextNode.currentState)){
+			if(visited.containsKey(nextNode.currentState)){
 				//skip this node.
+				System.out.println("VISITED!!");
 			}
 			else{
 				if(nextNode.currentState.goalState(environment.home_Coordinate, environment.home_orientation, environment.number_of_dirty_states)){
@@ -40,6 +41,7 @@ public class BreadthFirstSearch implements Algorithms{
 					successorNode.actionTo = action;
 					frontier.add(successorNode);
 				}
+				visited.put(nextNode.currentState, nextNode);
 			}
 		}
 		

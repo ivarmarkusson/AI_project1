@@ -1,4 +1,4 @@
-package prog1;
+//package prog1;
 
 import java.util.Collection;
 import java.util.Stack;
@@ -45,11 +45,11 @@ public class Agent
 					Matcher m = Pattern.compile("\\(\\s*AT\\s+([A-Z]+)\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
 						//TODO: Initialize dirt or obstacle for this position in the grid
-						if (m.group(1) == "DIRT"){
+						if (m.group(1).equals("DIRT")){
 							environment.insert(Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)), true, false);
 						}
-						else if (m.group(1) == "OBSTACLE"){
-							environment.insert(Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)), false, true);							
+						else if (m.group(1).equals("OBSTACLE")){
+							environment.insert(Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)), false, true);
 						}
 					}
 				}
@@ -61,9 +61,11 @@ public class Agent
 			}
 		}
 		
-		BreadthFirstSearch breadthFirstSearch = new BreadthFirstSearch(environment);
+		//BreadthFirstSearch bfs = new BreadthFirstSearch(environment);
+		DepthFirstSearch dfs = new DepthFirstSearch(environment);
 		_path = new Stack<String>();
-		_path = breadthFirstSearch.search();
+		//_path = bfs.search();
+		_path = dfs.search();
 		turn_on = true;
 		//System.out.println(_path.toString());
 		//System.out.println("I IS HERE!");

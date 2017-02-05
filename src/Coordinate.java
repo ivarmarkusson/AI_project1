@@ -13,16 +13,16 @@ public class Coordinate {
 	public Coordinate forward(String orientation){
 		Coordinate next = new Coordinate(this.x, this.y);
 		
-		if(orientation == "NORTH"){
+		if(orientation.equals("NORTH")){
 			next.y++;
 		}
-		else if(orientation == "SOUTH"){
+		else if(orientation.equals("SOUTH")){
 			next.y--;
 		}
-		else if(orientation == "EAST"){
+		else if(orientation.equals("EAST")){
 			next.x++;
 		}
-		else if(orientation == "WEST"){
+		else if(orientation.equals("WEST")){
 			next.x--;
 		}
 		

@@ -23,20 +23,23 @@ public class DepthFirstSearch implements Algorithms{
 	
 	public Stack<String> search(){
 		frontier.push(root);
-		System.out.println(1);
+		//System.out.println(1);
 		while(!frontier.isEmpty()){
-			System.out.println(2);
+			
+			//System.out.println(2);
 			Node nextNode = frontier.pop();
+			
 			if(nextNode.currentState.goalState(environment.home_Coordinate, environment.home_orientation, environment.number_of_dirty_states)){
-				System.out.println(3);
+				//System.out.println(3);
 				return nextNode.path();
 			}
 			for(String action : nextNode.currentState.legalActions(environment)){
-				System.out.println(4);
-				System.out.println(action);
+				//System.out.println(4);
+				//System.out.println("[(" + nextNode.currentState.coordinate.x + " , " + nextNode.currentState.coordinate.y + "), " + nextNode.currentState.orientation + ", " + action + "]");
+				//System.out.println("Dirt: " + environment.number_of_dirty_states);
 				Node successorNode = new Node(nextNode.currentState.successorState(action, environment));
-				System.out.println("(" + nextNode.currentState.coordinate.x + " , " + nextNode.currentState.coordinate.y + ")");
 				successorNode.actionTo = action;
+				System.out.println("[(" + successorNode.currentState.coordinate.x + " , " + successorNode.currentState.coordinate.y + "), " + successorNode.currentState.orientation + ", " + successorNode.actionTo + "]");
 				frontier.push(successorNode);
 			}
 		}
