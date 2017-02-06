@@ -22,7 +22,7 @@ public class Agent
 				if (perceptName.equals("HOME")) {
 					Matcher m = Pattern.compile("\\(\\s*HOME\\s+([0-9]+)\\s+([0-9]+)\\s*\\)").matcher(percept);
 					if (m.matches()) {
-						//TODO: Initialize init state
+						//TODO: Initialize agents initial state
 						environment.setHome(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
 					}
 				}
@@ -61,10 +61,10 @@ public class Agent
 		}
 		
 		environment.setGrid();
+		environment.printGrid();
 		BreadthFirstSearch breadthFirstSearch = new BreadthFirstSearch(environment);
-		_path = new Stack<String>();
 		_path = breadthFirstSearch.search();
-		_path.push("TURN_ON");
+		System.out.println(_path.toString());
 		
     }
     

@@ -2,15 +2,10 @@ package prog1;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 
 
 public class State {
-	
-	//private enum Orientation {NORTH, EAST, SOUTH, WEST};
-	//private enum Actions {TURN_ON, TURN_OFF, GO, TURN_LEFT, TURN_RIGHT, SUCK};
-	
 	public Coordinate coordinate;
 	public boolean isdirty;
 	public boolean isObsticle; 
@@ -22,13 +17,13 @@ public class State {
 		coordinate = new Coordinate(x, y);
 		isdirty = dirt;
 		isObsticle = obst;
-		orientation = orient;		
+		orientation = orient;
 	}
 	
 	public List<String> legalActions(Environment environment) {
 		List<String> actions = new ArrayList<String>();
 		
-		if(this.isdirty){
+		if(this.isdirty && !this.cleaned.contains(this.coordinate)){
 			actions.add("SUCK");
 		}
 		
@@ -57,10 +52,10 @@ public class State {
 		if(coordinate.x >= environment.width || coordinate.y >= environment.length || coordinate.x < 0 || coordinate.y < 0){
 			return false;
 		}
-		else if(environment.grid[coordinate.x][coordinate.y].isObsticle == false){
-			return true;
+		else if(environment.grid[coordinate.x][coordinate.y].isObsticle){
+			return false;
 		}
-		return false;
+		return true;
 	}
 	
 	private State turn(Environment environment, String orientation, boolean right){
@@ -96,6 +91,7 @@ public class State {
 		}
 		
 		State result = new State(this.coordinate.x, this.coordinate.y, this.isdirty, this.isObsticle, newOrientation);
+		result.cleaned = this.cleaned;
 		return result;
 	}
 	
@@ -140,9 +136,17 @@ public class State {
 	        return false;
 	    }
 		
-		final State comparison = (State) obj;
+		State comparison = (State) obj;
 		
-		if(this.coordinate.equals(comparison.coordinate) && this.orientation.equals(comparison.orientation) && this.isdirty == comparison.isdirty){
+		if(this.coordinate.equals(comparison.coordinate) && this.orientation.equals(comparison.orientation)){
+			if(this.cleaned.size() != comparison.cleaned.size()){
+				return false;
+			}
+			for(Coordinate coord : this.cleaned){
+				if(comparison.cleaned.contains(coord) == false){
+					return false;
+				}
+			}
 			return true;
 		}
 		else{

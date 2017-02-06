@@ -21,6 +21,7 @@ public class BreadthFirstSearch implements Algorithms{
 		
 		State home_State = new State(home_x, home_y, environment.grid[home_x][home_y].isdirty, environment.grid[home_x][home_y].isObsticle, environment.home_orientation);
 		root = new Node(home_State);
+		root.actionTo = "TURN_ON";
 		
 		visited = new HashMap<State, Node>();
 	}
@@ -30,17 +31,27 @@ public class BreadthFirstSearch implements Algorithms{
 		
 		while(!frontier.isEmpty()){
 			Node nextNode = frontier.remove();
-			System.out.println("(" + nextNode.currentState.coordinate.x + ", " + nextNode.currentState.coordinate.y + ") " + nextNode.currentState.orientation);
-			System.out.println(nextNode.path().toString());
+			//System.out.println("(" + nextNode.currentState.coordinate.x + ", " + nextNode.currentState.coordinate.y + ") " + nextNode.currentState.orientation);
+			//System.out.println(nextNode.path().toString());
 			//System.out.println("number of dirt: " + environment.number_of_dirty_states);
-			//System.out.println("number of clean " + nextNode.currentState.cleaned.size());
+			System.out.print("number of clean " + nextNode.currentState.cleaned.size());
+			//System.out.println(" clean coords: ");
+			//for(Coordinate coord : nextNode.currentState.cleaned){
+				//System.out.println("(" + coord.x + ", " + coord.y + ")");
+			//}
+			System.out.println(" Home pos: (" + environment.home_Coordinate.x + ", " + environment.home_Coordinate.y + ")" + "-> curr: " + "(" + nextNode.currentState.coordinate.x + ", " + nextNode.currentState.coordinate.y + ") " + nextNode.currentState.orientation);
 			
 			if(visited.containsKey(nextNode.currentState)){
-				//skip this node.
+				//skip this node - state already visited by other path.
 				continue;
 			}
 			else{
-				//loop through legalactions() - childNodes
+				//Check if goal is reached
+				if(nextNode.currentState.goalState(environment.number_of_dirty_states, environment.home_Coordinate, environment.home_orientation)){
+					return nextNode.path();
+				}
+				
+				//loop through legal actions - childNodes
 				for(String action : nextNode.currentState.legalActions(environment)){
 					
 					State successorState = nextNode.currentState.successorState(action, environment);
@@ -49,17 +60,12 @@ public class BreadthFirstSearch implements Algorithms{
 					successorNode.parent = nextNode;
 					
 					frontier.add(successorNode);
-					
-					//Check for if goal is reached
-					if(successorState.goalState(environment.number_of_dirty_states, environment.home_Coordinate, environment.home_orientation)){
-						return successorNode.path();
-					}
 				}
 				visited.put(nextNode.currentState, nextNode);
 			}
 		}
 		
-		return new Stack<String>();
+		return root.path();
 	}
 
 }
